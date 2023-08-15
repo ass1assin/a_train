@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="plugins/elementui/index.css">
+</head>
+
+<body>
+<div id="app">
+    <el-container style="height: 500px; border: 1px solid #eee">
+        <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+            <el-menu :default-openeds="['1', '3']">
+                <el-submenu index="1">
+                    <template slot="title"><i class="el-icon-message"></i>导航一</template>
+                    <el-menu-item-group>
+                        <template slot="title">分组一</template>
+                        <el-menu-item index="1-1">选项1</el-menu-item>
+                        <el-menu-item index="1-2">选项2</el-menu-item>
+                    </el-menu-item-group>
+                    <el-menu-item-group title="分组2">
+                        <el-menu-item index="1-3">选项3</el-menu-item>
+                    </el-menu-item-group>
+                    <el-submenu index="1-4">
+                        <template slot="title">选项4</template>
+                        <el-menu-item index="1-4-1">选项4-1</el-menu-item>
+                    </el-submenu>
+                </el-submenu>
+                <el-submenu index="2">
+                    <template slot="title"><i class="el-icon-menu"></i>导航二</template>
+                    <el-menu-item-group>
+                        <template slot="title">分组一</template>
+                        <el-menu-item index="2-1">选项1</el-menu-item>
+                        <el-menu-item index="2-2">选项2</el-menu-item>
+                    </el-menu-item-group>
+                    <el-menu-item-group title="分组2">
+                        <el-menu-item index="2-3">选项3</el-menu-item>
+                    </el-menu-item-group>
+                    <el-submenu index="2-4">
+                        <template slot="title">选项4</template>
+                        <el-menu-item index="2-4-1">选项4-1</el-menu-item>
+                    </el-submenu>
+                </el-submenu>
+                <el-submenu index="3">
+                    <template slot="title"><i class="el-icon-setting"></i>导航三</template>
+                    <el-menu-item-group>
+                        <template slot="title">分组一</template>
+                        <el-menu-item index="3-1">选项1</el-menu-item>
+                        <el-menu-item index="3-2">选项2</el-menu-item>
+                    </el-menu-item-group>
+                    <el-menu-item-group title="分组2">
+                        <el-menu-item index="3-3">选项3</el-menu-item>
+                    </el-menu-item-group>
+                    <el-submenu index="3-4">
+                        <template slot="title">选项4</template>
+                        <el-menu-item index="3-4-1">选项4-1</el-menu-item>
+                    </el-submenu>
+                </el-submenu>
+            </el-menu>
+        </el-aside>
+
+<!--        鼠标放在点上面他会显现-->
+        <el-container>
+            <el-header style="text-align: right; font-size: 12px">
+                <el-dropdown>
+                    <i class="el-icon-setting" style="margin-right: 15px"></i>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item>查看</el-dropdown-item>
+                        <el-dropdown-item>新增</el-dropdown-item>
+                        <el-dropdown-item>删除</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+                <span>王小虎</span>
+
+<!--新增和查找-->
+            </el-header>
+            <div>
+<!--                新增-->
+                <el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
+                <el-dialog title="新增信息" :visible.sync="dialogFormVisible">
+                    <el-form :model="form" :rules="rules">
+                        <el-form-item prop="name" label="姓名" :label-width="formLabelWidth">
+                            <el-input v-model="form.name" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item prop="gender" label="性别" :label-width="formLabelWidth">
+                            <el-select v-model="form.gender" placeholder="性别">
+                                <el-option label="男" value="男"></el-option>
+                                <el-option label="女" value="女"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item prop="number" label="数量" :label-width="formLabelWidth">
+                            <el-input v-model="form.number" autocomplete="off"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="save()">确 定</el-button>
+                    </div>
+                </el-dialog>
+<!--                查找-->
+                <el-input v-model="input" placeholder="内容" width="130px"></el-input>
+                <el-row>
+                    <el-button type="primary">查找</el-button>
+                </el-row>
+            </div>
+
+<!--            删除-->
+            <el-main>
+                <el-table :data="users" current-row-key="id">
+                    <el-table-column prop="id" label="日期" width="140">
+                    </el-table-column>
+                    <el-table-column prop="name" label="姓名">
+                    </el-table-column>
+                    <el-table-column prop="gender" label="性别">
+                    </el-table-column>
+                    <el-table-column prop="number" label="数量">
+                    </el-table-column>
+                    <el-table-column prop="" label="操作">
+                        <template slot-scope="scope" >
+                        <el-button type="primary" icon="el-icon-edit" circle></el-button>
+                        <el-button type="danger" icon="el-icon-delete"circle @click="qdelete(scope.row)"></el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+<!--分页-->
+                <div class="block">
+                    <span class="demonstration">显示总数</span>
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page.sync="pagination.currentpage"
+                            :page-size="pagination.pagesize"
+                            layout="total, prev, pager, next"
+                            :total="pagination.total">
+                    </el-pagination>
+                </div>
+            </el-main>
+
+        </el-container>
+    </el-container>
+</div>
+
+<script type="text/javascript" src="./js/jquery.min.js"></script>
+
+<script src="./js/axios-0.18.0.js"></script>
+<script src="api/main.js"></script>
+<script src="plugins/axios/axios.min.js"></script>
+
+<!--静态资源element-->
+<script src="./js/vue.js"></script>
+<script src="plugins/elementui/index.js"></script>
+
+<script>
+    new Vue({
+        el:"#app",
+        data:{
+                users: [],
+                input: '',
+                dialogFormVisible: false,
+            // 表单
+                form: {
+                    name: '',
+                    number:'',
+                    gender: '',
+                },
+            // 添加确认
+                rules:{
+                    name:[{required: true,message:'没名吗？嗯？'}],
+                    number:[{required: true,message:'变性人？嗯？'}],
+                    gender:[{required: true,message:'就一个同名吗？'}],
+                },
+                formLabelWidth: '120px',
+                dialogVisible: false,
+            // 页码
+            pagination:{
+                    currentpage:1,
+                    pagesize:10,
+                    total:100,
+                    type: "",
+                    name: "",
+                    description: ""
+            }
+        },
+        created() {//DOM构建前执行
+            this.getAll();
+        },
+// 一定注意不要少s！！！
+
+        methods: {
+            getAll(){
+                // param = "?type="+this.pagination.type;
+                // param +="&name="+this.pagination.name;
+                // param +="&description="+this.pagination.description;
+
+              axios.get("/main/"+this.pagination.currentpage+"/"+this.pagination.pagesize).then((res)=>{
+
+                  // 有可能是这
+                  //   this.pagination.pagesize=this.data.data.size;
+                  //   this.pagination.currentpage=this.data.data.current;
+
+    // res.data：是从响应对象中获取后端返回的数据部分,后面这个data代表data:dataList的dataList
+                    this.users=res.data.data;
+              }).catch(err=>{
+                  alert("查询错误");
+                  console.log(err);
+              });
+            },
+// 保存
+            save(){
+        // .then((res) => { ... }): 在请求成功后执行的回调函数，其中 res 是响应对象。在这里进行操作结果的判断和处理。
+              axios.post("/main",this.form).then((res)=>{
+                  if(res.data.flag){
+                      //1.关闭弹层
+                      this.dialogFormVisible = false;
+                      console.log("者死了")
+                      // 分开的，单独应用的index.js
+                      this.$message.success("添加成功");
+                  }else{
+                      this.$message.error("添加失败");
+                  }
+              }).finally(()=>{
+                  //2.重新加载数据
+                  this.getAll();
+              });
+            },
+// 删除
+            qdelete(row){
+                this.$confirm("此操作永久删除当前信息，是否继续？嗯？","看清楚",{type:"info"}).then(()=>{
+               axios.delete("/main/"+row.id).then((res)=>{
+                   if (res.data.flag){
+                       this.$message.success("删除成功");
+                   }
+                   else{
+                       this.dialogVisible = false;
+                       this.$message.success("删除失败");
+                   }
+               }).finally(()=>{
+                   this.getAll();
+               });
+                }).catch(()=>{});
+            },
+
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+            },
+//切换页码
+            handleCurrentChange(val) {
+                // this.pagination.currentpage=val;
+                this.getAll();
+                console.log(`当前页: ${val}`);
+            },
+
+        },
+
+    })
+
+</script>
+</body>
+</html>
