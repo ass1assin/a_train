@@ -24,7 +24,7 @@ public class MainImp extends ServiceImpl<MainMapper, Main> implements MainServic
     public boolean delete(Integer id){return mainMapper.deleteById(id)>0;}
 
     @Override
-    public IPage<Main> getPage(int currentpage,int pagesize){
+    public IPage<Main> getPage(int currentpage,int pagesize,Main main){
     IPage page=new Page(currentpage,pagesize);
     mainMapper.selectPage(page,null);
     return page;

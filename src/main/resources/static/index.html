@@ -105,7 +105,7 @@
                 </el-row>
             </div>
 
-<!--            删除-->
+<!--            列表展示删除-->
             <el-main>
                 <el-table :data="users" current-row-key="id">
                     <el-table-column prop="id" label="日期" width="140">
@@ -176,32 +176,34 @@
             // 页码
             pagination:{
                     currentpage:1,
-                    pagesize:10,
+                    pagesize:20,
                     total:100,
-                    type: "",
-                    name: "",
-                    description: ""
+                     name: '',
+                     number:'',
+                     gender: '',
             }
         },
         created() {//DOM构建前执行
             this.getAll();
         },
-// 一定注意不要少s！！！
+    // 一定注意不要少s！！！
 
         methods: {
             getAll(){
-                // param = "?type="+this.pagination.type;
-                // param +="&name="+this.pagination.name;
-                // param +="&description="+this.pagination.description;
+                param = "?type="+this.pagination.type;
+                param +="&name="+this.pagination.name;
+                param +="&description="+this.pagination.description;
 
-              axios.get("/main/"+this.pagination.currentpage+"/"+this.pagination.pagesize).then((res)=>{
+              axios.get("/main/"+this.pagination.currentpage+"/"+this.pagination.pagesize+param).then((res)=>{
+                    console.log(res.data.data.current);
+                    console.log(res.data.data);
 
-                  // 有可能是这
-                  //   this.pagination.pagesize=this.data.data.size;
-                  //   this.pagination.currentpage=this.data.data.current;
+                    this.pagination.currentpage=res.data.data.current;
+                    this.pagination.pagesize=res.data.data.size;
+                    this.pagination.total = res.data.data.total;
 
-    // res.data：是从响应对象中获取后端返回的数据部分,后面这个data代表data:dataList的dataList
-                    this.users=res.data.data;
+    // res.data：响应对象的数据部分通常可以通过res.data来访问。后面这个data代表data返回（响应的所有数据）(records是其中的一项)
+                    this.users=res.data.data.records;
               }).catch(err=>{
                   alert("查询错误");
                   console.log(err);
@@ -209,7 +211,7 @@
             },
 // 保存
             save(){
-        // .then((res) => { ... }): 在请求成功后执行的回调函数，其中 res 是响应对象。在这里进行操作结果的判断和处理。
+    // .then((res) => { ... }): 在请求成功后执行的回调函数，其中 res 是响应对象。在这里进行操作结果的判断和处理。
               axios.post("/main",this.form).then((res)=>{
                   if(res.data.flag){
                       //1.关闭弹层
@@ -247,7 +249,7 @@
             },
 //切换页码
             handleCurrentChange(val) {
-                // this.pagination.currentpage=val;
+                this.pagination.currentpage=val;
                 this.getAll();
                 console.log(`当前页: ${val}`);
             },

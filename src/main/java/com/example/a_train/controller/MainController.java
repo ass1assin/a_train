@@ -36,15 +36,16 @@ public class MainController{
     }
 
     @GetMapping("{currentpage}/{pagesize}")
-    public Result getPage(@PathVariable int currentpage,@PathVariable int pagesize){
-        IPage<Main> page= mainService.getPage(currentpage,pagesize);
+//    接受分页参数 currentPage（当前页码）和 pageSize（每页显示的记录数
+    public Result getPage(@PathVariable int currentpage,@PathVariable int pagesize,Main main){
+        IPage<Main> page= mainService.getPage(currentpage,pagesize,main);
         //如果当前页码值大于总页码数，那么重新执行查询操作，使用最大页码值作为当前页码值。
-        if (currentpage > page.getPages()){
-//将当前页码设置为总页数，以防止超出范围的情况。((int)page.getPages()总页数)
-            page = mainService.getPage((int)page.getPages(),pagesize);
-        }
-
-        return new Result(true,mainService.getPage(currentpage,pagesize));
+//        if (currentpage > page.getPages()){
+////将当前页码设置为总页数，以防止超出范围的情况。((int)page.getPages()总页数)
+//            page = mainService.getPage((int)page.getPages(),pagesize);
+//        }
+        int total= (int) page.getTotal();
+        return new Result(true,mainService.getPage(currentpage,pagesize,main));
     }
 
 }
