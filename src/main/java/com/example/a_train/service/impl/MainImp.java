@@ -9,8 +9,6 @@ import com.example.a_train.service.MainService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class MainImp extends ServiceImpl<MainMapper, Main> implements MainService {
@@ -24,7 +22,7 @@ public class MainImp extends ServiceImpl<MainMapper, Main> implements MainServic
     public boolean delete(Integer id){return mainMapper.deleteById(id)>0;}
 
     @Override
-    public IPage<Main> getPage(int currentpage,int pagesize,Main main){
+    public IPage<Main> getPage(int currentpage,int pagesize){
     IPage page=new Page(currentpage,pagesize);
     mainMapper.selectPage(page,null);
     return page;

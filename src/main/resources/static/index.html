@@ -79,18 +79,18 @@
 <!--                新增-->
                 <el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
                 <el-dialog title="新增信息" :visible.sync="dialogFormVisible">
-                    <el-form :model="form" :rules="rules">
+                    <el-form :model="pagination" :rules="rules">
                         <el-form-item prop="name" label="姓名" :label-width="formLabelWidth">
-                            <el-input v-model="form.name" autocomplete="off"></el-input>
+                            <el-input v-model="pagination.name" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item prop="gender" label="性别" :label-width="formLabelWidth">
-                            <el-select v-model="form.gender" placeholder="性别">
+                            <el-select v-model="pagination.gender" placeholder="性别">
                                 <el-option label="男" value="男"></el-option>
                                 <el-option label="女" value="女"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item prop="number" label="数量" :label-width="formLabelWidth">
-                            <el-input v-model="form.number" autocomplete="off"></el-input>
+                            <el-input v-model="pagination.number" autocomplete="off"></el-input>
                         </el-form-item>
                     </el-form>
                     <div slot="footer" class="dialog-footer">
@@ -108,7 +108,7 @@
 <!--            列表展示删除-->
             <el-main>
                 <el-table :data="users" current-row-key="id">
-                    <el-table-column prop="id" label="日期" width="140">
+                    <el-table-column prop="id" label="序号" width="140">
                     </el-table-column>
                     <el-table-column prop="name" label="姓名">
                     </el-table-column>
@@ -123,7 +123,6 @@
                         </template>
                     </el-table-column>
                 </el-table>
-
 <!--分页-->
                 <div class="block">
                     <span class="demonstration">显示总数</span>
@@ -131,7 +130,7 @@
                             @size-change="handleSizeChange"
                             @current-change="handleCurrentChange"
                             :current-page.sync="pagination.currentpage"
-                            :page-size="pagination.pagesize"
+                            :page-size="10"
                             layout="total, prev, pager, next"
                             :total="pagination.total">
                     </el-pagination>
@@ -160,11 +159,7 @@
                 input: '',
                 dialogFormVisible: false,
             // 表单
-                form: {
-                    name: '',
-                    number:'',
-                    gender: '',
-                },
+                paginationShow:true,
             // 添加确认
                 rules:{
                     name:[{required: true,message:'没名吗？嗯？'}],
@@ -176,11 +171,11 @@
             // 页码
             pagination:{
                     currentpage:1,
-                    pagesize:20,
-                    total:100,
-                     name: '',
-                     number:'',
-                     gender: '',
+                    pagesize:10,
+                    total:0,
+                    name: '',
+                    number:'',
+                    gender: '',
             }
         },
         created() {//DOM构建前执行
@@ -190,17 +185,13 @@
 
         methods: {
             getAll(){
-                param = "?type="+this.pagination.type;
-                param +="&name="+this.pagination.name;
-                param +="&description="+this.pagination.description;
 
-              axios.get("/main/"+this.pagination.currentpage+"/"+this.pagination.pagesize+param).then((res)=>{
+              axios.get("/main/"+this.pagination.currentpage+"/"+this.pagination.pagesize).then((res)=>{
                     console.log(res.data.data.current);
-                    console.log(res.data.data);
 
                     this.pagination.currentpage=res.data.data.current;
                     this.pagination.pagesize=res.data.data.size;
-                    this.pagination.total = res.data.data.total;
+                    this.pagination.total =res.data.data.total;
 
     // res.data：响应对象的数据部分通常可以通过res.data来访问。后面这个data代表data返回（响应的所有数据）(records是其中的一项)
                     this.users=res.data.data.records;
@@ -212,7 +203,7 @@
 // 保存
             save(){
     // .then((res) => { ... }): 在请求成功后执行的回调函数，其中 res 是响应对象。在这里进行操作结果的判断和处理。
-              axios.post("/main",this.form).then((res)=>{
+              axios.post("/main",this.pagination).then((res)=>{
                   if(res.data.flag){
                       //1.关闭弹层
                       this.dialogFormVisible = false;
@@ -246,12 +237,14 @@
 
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
+                console.log("有问题吗");
             },
 //切换页码
-            handleCurrentChange(val) {
-                this.pagination.currentpage=val;
+            handleCurrentChange(currentage) {
+                // 使用this.pagination.currentPage = val，强制改变分页页数以及样式，没法完全重置分页组件
+                this.pagination.currentpage=currentage;
                 this.getAll();
-                console.log(`当前页: ${val}`);
+                // console.log(`当前页: ${val}`);
             },
 
         },

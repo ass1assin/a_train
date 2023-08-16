@@ -9,5 +9,5 @@ public interface MainService extends IService<Main> {
 
     boolean delete(Integer id);
 
-    IPage<Main> getPage(int currentpage,int pagesize,Main main);
+    IPage<Main> getPage(int currentpage,int pagesize);
 }
