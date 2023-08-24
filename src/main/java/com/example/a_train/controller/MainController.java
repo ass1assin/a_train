@@ -8,6 +8,8 @@ import com.example.a_train.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 //@Slf4j
 @RestController
 @RequestMapping("/main")
@@ -29,12 +31,24 @@ public class MainController{
         return new Result(true,mainService.save(main));
     }
 //
+//    @PutMapping
+//    public Result update(@RequestBody Main main){return new Result(true,mainService.update(main));}
+
     @DeleteMapping("/{id}")
 //@PathVariable 注解。它表示从 URL 路径中提取出的名为 id 的变量值。
     public Result delete(@PathVariable Integer id){
         return new Result(true,mainService.delete(id));
     }
-
+    @GetMapping("{name}/{number}/{gender}")
+    public Result getByall(@PathVariable  String name,
+                           @PathVariable  Integer number,
+                           @PathVariable  String gender){
+        return new Result(true,mainService.getByall(name, number, gender));
+    }
+//    @GetMapping("/{id}")
+//    public Result getById(@PathVariable Integer id){
+//        return new Result(true,mainService.getById(id));
+//    }
     @GetMapping("{currentpage}/{pagesize}")
 //    接受分页参数 currentPage（当前页码）和 pageSize（每页显示的记录数
     public Result getPage(@PathVariable int currentpage,@PathVariable int pagesize){

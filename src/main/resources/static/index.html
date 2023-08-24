@@ -98,15 +98,17 @@
                         <el-button type="primary" @click="save()">确 定</el-button>
                     </div>
                 </el-dialog>
-<!--                查找-->
-                <el-input v-model="input" placeholder="内容" width="130px"></el-input>
-                <el-row>
-                    <el-button type="primary">查找</el-button>
-                </el-row>
-            </div>
 
+            </div>
+            <!--                查找-->
 <!--            列表展示删除-->
             <el-main>
+
+                <el-input v-model="pagination.name" placeholder="姓名" style="width:130px;"></el-input>
+                <el-input v-model="pagination.number" placeholder="数量" style="width:130px;"></el-input>
+                <el-input v-model="pagination.gender" placeholder="性别" style="width:130px;"></el-input>
+                <el-button type="primary" @click="find()">查找</el-button>
+
                 <el-table :data="users" current-row-key="id">
                     <el-table-column prop="id" label="序号" width="140">
                     </el-table-column>
@@ -218,6 +220,17 @@
                   this.getAll();
               });
             },
+// 查询
+            find(){
+                axios.get("/main/"+this.pagination.name+"/"+this.pagination.number+"/"+this.pagination.gender).then((res)=>{
+                    this.pagination.name=res.data.data.name;
+                    this.pagination.number=res.data.data.number;
+                    this.pagination.gender=res.data.data.gender;
+
+                    this.users=res.data.data;
+                })
+            }
+             ,
 // 删除
             qdelete(row){
                 this.$confirm("此操作永久删除当前信息，是否继续？嗯？","看清楚",{type:"info"}).then(()=>{
