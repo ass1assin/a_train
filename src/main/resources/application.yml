@@ -6,6 +6,12 @@ spring:
       url: jdbc:mysql://localhost:3306/jideshan?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&tinyInt1isBit=false
       username: root
       password: 144601
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: 144601
+
 mybatis-plus:
   type-aliases-package: com.example.a_train.entity # ?????
   configuration:

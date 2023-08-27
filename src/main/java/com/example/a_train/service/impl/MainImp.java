@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.a_train.controller.utils.Result;
 import com.example.a_train.entity.Main;
 import com.example.a_train.mapper.MainMapper;
 import com.example.a_train.service.MainService;
+//import com.example.a_train.utils.CacheClient;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ public class MainImp extends ServiceImpl<MainMapper, Main> implements MainServic
     @Resource
     private MainMapper mainMapper;
 
+//    @Resource
+//    private CacheClient cacheClient;
     @Override
     public boolean save(Main main){return mainMapper.insert(main)>0;}
 
@@ -34,11 +38,13 @@ public class MainImp extends ServiceImpl<MainMapper, Main> implements MainServic
 
     @Override
     public List<Main> getByall(String name, Integer number, String gender){
-        QueryWrapper<Main> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("name", name);
-        queryWrapper.eq("number",number);
-        queryWrapper.eq("gender", gender);
-        return mainMapper.selectList(queryWrapper);
+
+            QueryWrapper<Main> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("name", name);
+            queryWrapper.eq("number",number);
+            queryWrapper.eq("gender", gender);
+            return mainMapper.selectList(queryWrapper);
+
     }
 
     @Override

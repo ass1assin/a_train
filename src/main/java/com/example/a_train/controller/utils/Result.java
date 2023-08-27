@@ -1,5 +1,6 @@
 package com.example.a_train.controller.utils;
 
+
 import lombok.Data;
 
 @Data
@@ -18,4 +19,7 @@ public class Result {
         this.flag = flag;
         this.data = data;
     }
+//    public Result rs(Object data){
+//        return new Result(true,data);
+//    }
 }
