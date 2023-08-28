@@ -19,7 +19,7 @@ public class Result {
         this.flag = flag;
         this.data = data;
     }
-//    public Result rs(Object data){
-//        return new Result(true,data);
-//    }
+    public static Result rs(Object data){
+        return new Result(true,data);
+    }
 }

@@ -9,41 +9,40 @@ import com.example.a_train.controller.utils.Result;
 import com.example.a_train.entity.Main;
 import com.example.a_train.mapper.MainMapper;
 import com.example.a_train.service.MainService;
-//import com.example.a_train.utils.CacheClient;
+import com.example.a_train.utils.CacheClient;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.example.a_train.utils.RedisConstants.*;
+
 @Service
 public class MainImp extends ServiceImpl<MainMapper, Main> implements MainService {
     @Resource
     private MainMapper mainMapper;
 
-//    @Resource
-//    private CacheClient cacheClient;
+    @Resource
+    private CacheClient cacheClient;
+
     @Override
     public boolean save(Main main){return mainMapper.insert(main)>0;}
 
-//    @Override
-//    public boolean update(Main main){return mainMapper.updateById(main)>0;}
 
     @Override
     public boolean delete(Integer id){return mainMapper.deleteById(id)>0;}
 
-//@Override 用于标识一个方法是重写了父类或接口中的方法
-//    @Override
-//    public boolean getById(Integer id){return mainMapper.get}
-
     @Override
-    public List<Main> getByall(String name, Integer number, String gender){
+    public Result getByall(String name, Integer number, String gender){
+
+//        Main main=cacheClient.findCache(CACHE_SHOP_KEY,name,number,gender,Main.class,this::getById);
 
             QueryWrapper<Main> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("name", name);
             queryWrapper.eq("number",number);
             queryWrapper.eq("gender", gender);
-            return mainMapper.selectList(queryWrapper);
+            return Result.rs(mainMapper.selectList(queryWrapper));
 
     }
 
