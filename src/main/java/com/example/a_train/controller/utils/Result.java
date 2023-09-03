@@ -22,4 +22,5 @@ public class Result {
     public static Result rs(Object data){
         return new Result(true,data);
     }
+
 }

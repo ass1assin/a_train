@@ -44,6 +44,8 @@ public class MainController{
                            @PathVariable  Integer number,
                            @PathVariable  String gender){
         return new Result(true,mainService.getByall(name, number, gender));
+//        System.out.println(mainService.getByall(name, number, gender));
+//        return mainService.getByall(name, number, gender);
     }
 //    @GetMapping("/{id}")
 //    public Result getById(@PathVariable Integer id){

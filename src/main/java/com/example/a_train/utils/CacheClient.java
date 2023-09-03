@@ -1,19 +1,34 @@
 package com.example.a_train.utils;
 
 import cn.hutool.core.util.StrUtil;
+
+
+import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
+import com.example.a_train.controller.utils.Result;
+import com.example.a_train.dto.Results;
+import com.example.a_train.entity.Main;
+import com.example.a_train.mapper.MainMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.SneakyThrows;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Component
 public class CacheClient {
 
+    @Resource
+    private MainMapper mainMapper;
     private final StringRedisTemplate stringRedisTemplate;
 
     public CacheClient(StringRedisTemplate stringRedisTemplate){
@@ -42,30 +57,43 @@ public class CacheClient {
   //    <R,ID> R这使得该方法可以根据需要处理不同类型的数据
   //    type 参数将数据映射为指定的Java类型 R。
   //    dbFallback：一个 Function<ID, R> 类型的参数，表示当缓存中没有数据时，从数据库中获取数据的回退函数。
-    public <R,ID> R findCache(String keyPrefix, ID id, Class<R> type, Function<ID, R> dbFallback){
-  //        传递的标识查找缓存
-        String key=keyPrefix+id;
+    @SneakyThrows
+    public <R> R findCache(String keyPrefix, String name , Integer number, String gender, Class<R> type){
+//         传递的标识查找缓存
+        String key=keyPrefix+name+number+gender;
+        // 1.从redis查询商铺缓存
        String json=stringRedisTemplate.opsForValue().get(key);
+//      返回了json:{"flag":true,"data":[{"id":3,"name":"阿斯顿","gender":"女","number":4},{"id":7,"name":"阿斯顿","gender":"女","number":4}],"total":0}
+        System.out.println("json:"+json);
 
       if(StrUtil.isNotBlank(json)){
-          return JSONUtil.toBean(json,type);
-      }
-  //      判断命中的是否是空值
-        if (json != null) {
-            // 返回一个错误信息
-            return null;
-        }
+//       创建了 objectMapper，您就可以使用它来进行 JSON 数据的序列化和反序列化操作
+          ObjectMapper objectMapper = new ObjectMapper();
+//       将 JSON 数据解析成了一个 JSON 树结构
+          JsonNode jsonArray = objectMapper.readTree(json);
+          System.out.println("jsonArray:"+jsonArray);
 
-  //      缓存内不存在，则在数据库查
-      R r=dbFallback.apply(id);
-  //      数据库也不存在
-      if (r==null)
-      {
-          stringRedisTemplate.opsForValue().set(key,"");
-          return null;
+//        将获取到的 JsonNode 对象转换为字符串形式
+          String jsonObject = String.valueOf(jsonArray.get(0));
+          System.out.println("jsonObject："+jsonObject);
+
+//        将获取到的jsonObject转换为对象
+          System.out.println("这里有"+JSONUtil.toBean(jsonObject,type));
+          return JSONUtil.toBean(jsonObject,type);
       }
-  //      数据库存在则写入redis
-      this.set(key,r);
-      return r;
+
+        QueryWrapper<Main> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("name", name);
+        queryWrapper.eq("number", number);
+        queryWrapper.eq("gender", gender);
+
+        R r= (R)mainMapper.selectList(queryWrapper);
+        System.out.println(mainMapper.selectList(queryWrapper));
+        System.out.println("存进去时候的："+r);
+
+        this.set(key,r);
+        return r;
+
+
     }
 }

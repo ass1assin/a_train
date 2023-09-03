@@ -36,14 +36,17 @@ public class MainImp extends ServiceImpl<MainMapper, Main> implements MainServic
     @Override
     public Result getByall(String name, Integer number, String gender){
 
-//        Main main=cacheClient.findCache(CACHE_SHOP_KEY,name,number,gender,Main.class,this::getById);
+        Main main=cacheClient.findCache(CACHE_SHOP_KEY,name,number,gender,Main.class);
 
-            QueryWrapper<Main> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("name", name);
-            queryWrapper.eq("number",number);
-            queryWrapper.eq("gender", gender);
-            return Result.rs(mainMapper.selectList(queryWrapper));
-
+//            QueryWrapper<Main> queryWrapper = new QueryWrapper<>();
+//            queryWrapper.eq("name", name);
+//            queryWrapper.eq("number", number);
+//            queryWrapper.eq("gender", gender);
+//        System.out.println(mainMapper.selectList(queryWrapper));
+////            return Result.rs(mainMapper.selectList(queryWrapper));
+//        System.out.println("这样的"+mainMapper.selectList(queryWrapper));
+//        System.out.println("返回前夕："+main);
+        return Result.rs(main);
     }
 
     @Override
